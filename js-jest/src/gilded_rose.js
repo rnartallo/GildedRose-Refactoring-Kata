@@ -10,6 +10,17 @@ class Shop {
   constructor(items = []) {
     this.items = items;
   }
+
+  update(quality, increment) {
+    if (increment > 0) {
+      return Math.min(50, quality + increment);
+    } else {
+      return Math.max(0, quality + increment);
+    }
+  }
+  is_conjured(name) {
+    return (name.startsWith("Conjured"));
+  }
   updateQuality() {
     for (let i = 0; i < this.items.length; i++) {
       let fineWine = false;
@@ -18,15 +29,7 @@ class Shop {
       let sellin = this.items[i].sellIn;
       let legendaryStatus = false;
       let goneOff = false;
-      let max_quality = 50;
-
-      function update(quality, increment) {
-        if (increment > 0) {
-          return Math.min(50, quality + increment);
-        } else {
-          return Math.max(0, quality + increment);
-        }
-      }
+      let multiplier = 1;
 
       if (name == "Aged Brie" || name == 'Backstage passes to a TAFKAL80ETC concert') {
         fineWine = true;
@@ -46,22 +49,23 @@ class Shop {
 
       if (!fineWine && !legendaryStatus) {
         if (goneOff) {
-          quality = update(quality, -2);
+          multiplier *= 2
         }
-        else {
-          quality = update(quality, -1);
+        if (this.is_conjured(name)) {
+          multiplier *= 2
         }
+        quality = this.update(quality, -1 * multiplier);
       }
 
       if (name == 'Backstage passes to a TAFKAL80ETC concert') {
         if (sellin > 10) {
-          quality = update(quality, 1);
+          quality = this.update(quality, 1);
         }
         else if (sellin > 4) {
-          quality = update(quality, 2);
+          quality = this.update(quality, 2);
         }
         else if (sellin > 0) {
-          quality = update(quality, 3);
+          quality = this.update(quality, 3);
         }
         else {
           quality = 0;
@@ -69,7 +73,7 @@ class Shop {
       }
 
       if (name == "Aged Brie") {
-        quality = update(quality, 1);
+        quality = this.update(quality, 1);
       }
 
       this.items[0].quality = quality;

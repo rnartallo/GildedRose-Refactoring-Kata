@@ -40,6 +40,8 @@ describe("Backstage passes", function () {
     const items = gildedRose.updateQuality();
     expect(items[0].quality).toBeGreaterThanOrEqual(1);
   });
+
+
   it("Less than 11 days to go - increases by 2", function () {
     const gildedRose = new Shop([new Item("Backstage passes to a TAFKAL80ETC concert", 10, 0)]);
     const items = gildedRose.updateQuality();
@@ -67,5 +69,23 @@ describe("Sulfuras", function () {
     const gildedRose = new Shop([new Item("Sulfuras, Hand of Ragnaros", 4, 34)]);
     const items = gildedRose.updateQuality();
     expect(items[0].sellIn).toBe(4);
+  });
+});
+
+describe("Conjured Items", function () {
+  it("Detects item is conjured", function () {
+    const gildedRose = new Shop([new Item("Conjured Mana Cake", 4, 34)]);
+    const items = gildedRose.updateQuality();
+    expect(gildedRose.is_conjured(items[0].name)).toBe(true);
+  });
+  it("Before sellby, decreases by 2", function () {
+    const gildedRose = new Shop([new Item("Conjured Walrus", 4, 34)]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].quality).toBe(32);
+  });
+  it("After sellby, decreases by 4", function () {
+    const gildedRose = new Shop([new Item("Conjured Walrus", 0, 34)]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].quality).toBe(30);
   });
 });
